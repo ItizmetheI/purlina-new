@@ -1,0 +1,25 @@
+---
+import Experience from '../experience/Experience.jsx';
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Purlina Matrix</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				background: #0a0a0a;
+				color: #f5f5f5;
+				font-family: system-ui, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<Experience client:only="react" />
+	</body>
+</html>

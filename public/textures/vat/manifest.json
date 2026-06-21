@@ -1,0 +1,28 @@
+{
+  "tiers": {
+    "desktop": {
+      "vertexCount": 9705,
+      "rowCount": 6,
+      "states": [
+        "blob",
+        "automotive",
+        "cosmetics",
+        "footwear",
+        "electronics",
+        "manufacturing"
+      ]
+    },
+    "mobile": {
+      "vertexCount": 2619,
+      "rowCount": 6,
+      "states": [
+        "blob",
+        "automotive",
+        "cosmetics",
+        "footwear",
+        "electronics",
+        "manufacturing"
+      ]
+    }
+  }
+}

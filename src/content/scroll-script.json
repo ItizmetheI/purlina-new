@@ -1,0 +1,30 @@
+{
+  "scenes": [
+    {
+      "id": "intro",
+      "logo": "PURLINA MATRIX",
+      "heading": "Yeni Nesil ....."
+    },
+    {
+      "id": "benefits",
+      "benefitsLabel": "Faydalar",
+      "benefits": [
+        "Yeni regülasyon değişikliğine adaptasyon",
+        "Kolaylık",
+        "Maliyet",
+        "Hız"
+      ]
+    },
+    {
+      "id": "scale",
+      "heading": "900+ sektöre uyumlanabilen yapı..."
+    },
+    {
+      "id": "sectors"
+    },
+    {
+      "id": "cta",
+      "cta": "Purlina Matrix Oluştur"
+    }
+  ]
+}
