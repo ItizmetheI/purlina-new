@@ -119,19 +119,88 @@ function buildBVH(triangles) {
   return new MeshBVH(geometry);
 }
 
-/** Projects every master-blob vertex to its nearest point on the BVH surface. */
-function conformToSurface(masterPositions, bvh) {
+/** Per-axis max |coordinate| across a triangle soup — used to pre-shape the
+ * projection ellipsoid to each product's own proportions (see conformToSurface). */
+function computeHalfExtents(triangles) {
+  const half = new THREE.Vector3(0, 0, 0);
+  for (const tri of triangles) {
+    for (const v of [tri.a, tri.b, tri.c]) {
+      half.x = Math.max(half.x, Math.abs(v.x));
+      half.y = Math.max(half.y, Math.abs(v.y));
+      half.z = Math.max(half.z, Math.abs(v.z));
+    }
+  }
+  half.x = Math.max(half.x, 0.05);
+  half.y = Math.max(half.y, 0.05);
+  half.z = Math.max(half.z, 0.05);
+  return half;
+}
+
+/**
+ * Projects every master-blob vertex onto the BVH surface — Blender Shrinkwrap
+ * "Project" mode, not "Nearest Surface Point": cast a ray toward the origin
+ * (the product's own recentered center) and take the first hit. Nearest-point
+ * alone collapses flat/elongated products (a toy car, a shoe) into a pyramid,
+ * because every sphere vertex just snaps to whichever single surface patch
+ * happens to be closest in Euclidean distance rather than tracing the
+ * silhouette as seen from the center.
+ *
+ * Casting straight from the master's unit-sphere vertices has the same
+ * problem one level up: a flat, wide product (the toy car) barely reaches
+ * the sphere's "top"/"bottom" directions, so those rays graze past it at an
+ * oblique angle instead of hitting it square-on, and collapse toward
+ * whichever surface they happen to clip — a "skirt" hanging off the
+ * recognizable top silhouette. Scaling each ray's origin by the product's
+ * own per-axis bounding extents first (an ellipsoid matching its actual
+ * proportions, the same fix an artist would do by reshaping the source mesh
+ * before shrinkwrapping it in Blender) gives every direction a much more
+ * even, perpendicular-ish view of the surface.
+ *
+ * Falls back to nearest-point only where a vertex's ray doesn't hit anything
+ * (concave pockets, etc.) — same fallback order CLAUDE.md's spec calls for.
+ */
+function conformToSurface(masterPositions, bvh, halfExtents) {
   const count = masterPositions.length / 3;
   const conformed = new Float32Array(masterPositions.length);
   const point = new THREE.Vector3();
+  const origin = new THREE.Vector3();
+  const direction = new THREE.Vector3();
+  const ray = new THREE.Ray();
   const target = {};
+  let fallbackCount = 0;
 
   for (let i = 0; i < count; i++) {
     point.set(masterPositions[i * 3], masterPositions[i * 3 + 1], masterPositions[i * 3 + 2]);
-    bvh.closestPointToPoint(point, target);
-    conformed[i * 3] = target.point.x;
-    conformed[i * 3 + 1] = target.point.y;
-    conformed[i * 3 + 2] = target.point.z;
+    origin.copy(point).multiply(halfExtents);
+    direction.copy(origin).negate().normalize();
+
+    ray.origin.copy(origin);
+    ray.direction.copy(direction);
+    const hitIn = bvh.raycastFirst(ray, THREE.DoubleSide);
+
+    ray.direction.copy(direction).negate();
+    const hitOut = bvh.raycastFirst(ray, THREE.DoubleSide);
+
+    let hit;
+    if (hitIn && hitOut) hit = hitIn.distance <= hitOut.distance ? hitIn : hitOut;
+    else hit = hitIn || hitOut;
+
+    let result;
+    if (hit) {
+      result = hit.point;
+    } else {
+      bvh.closestPointToPoint(point, target);
+      result = target.point;
+      fallbackCount++;
+    }
+
+    conformed[i * 3] = result.x;
+    conformed[i * 3 + 1] = result.y;
+    conformed[i * 3 + 2] = result.z;
+  }
+
+  if (fallbackCount > 0) {
+    console.log(`  (${fallbackCount}/${count} verts fell back to nearest-point — no ray hit)`);
   }
   return conformed;
 }
@@ -195,7 +264,8 @@ async function bakeTier(tierName) {
     // region happens to be closest instead of tracing the full silhouette.
     const triangles = normalizeTriangles(rawTriangles, 1);
     const bvh = buildBVH(triangles);
-    const conformed = normalizePoints(conformToSurface(masterPositions, bvh));
+    const halfExtents = computeHalfExtents(triangles);
+    const conformed = normalizePoints(conformToSurface(masterPositions, bvh, halfExtents));
     const normals = computeSmoothNormals(indexArray, conformed);
 
     states.push({ name: sector.name, positions: conformed, normals });

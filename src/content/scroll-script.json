@@ -16,14 +16,38 @@
       ]
     },
     {
-      "id": "scale",
-      "heading": "900+ sektöre uyumlanabilen yapı..."
+      "id": "automotive",
+      "sector": "automotive",
+      "heading": "Otomotiv",
+      "body": "Placeholder: automotive sector copy."
     },
     {
-      "id": "sectors"
+      "id": "cosmetics",
+      "sector": "cosmetics",
+      "heading": "Kozmetik",
+      "body": "Placeholder: cosmetics sector copy."
     },
     {
-      "id": "cta",
+      "id": "footwear",
+      "sector": "footwear",
+      "heading": "Ayakkabı & Tekstil",
+      "body": "Placeholder: footwear/textile sector copy."
+    },
+    {
+      "id": "electronics",
+      "sector": "electronics",
+      "heading": "Elektronik",
+      "body": "Placeholder: electronics sector copy."
+    },
+    {
+      "id": "manufacturing",
+      "sector": "manufacturing",
+      "heading": "Hassas Üretim",
+      "body": "Placeholder: precision manufacturing sector copy."
+    },
+    {
+      "id": "outro",
+      "heading": "900+ sektöre uyumlanabilen yapı...",
       "cta": "Purlina Matrix Oluştur"
     }
   ]
