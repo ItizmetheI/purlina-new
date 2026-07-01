@@ -1,34 +1,831 @@
 ---
-import Experience from '../experience/Experience.jsx';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
-			rel="stylesheet"
-		/>
-		<title>PURLINA MATRIX CORE — Dielectric Immersion Cooling</title>
-		<style>
-			html,
-			body {
-				margin: 0;
-				/* Deep indigo-navy — visible dark blue, not near-black.
-				   Chrome blob needs atmosphere to float in, not a void.
-				   Screen-blend sector glows read properly against a colored base. */
-				background: radial-gradient(ellipse at 50% 30%, #141c3d 0%, #0b0d20 55%, #060810 100%);
-				color: #f5f5f5;
-				font-family: system-ui, sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<Experience client:only="react" />
-	</body>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Yapay Zekâ Veri Merkezleri İçin Dielektrik İmmersiyon Soğutma Platformu. Dielectric Immersion Cooling Platform for Artificial Intelligence Data Centers." />
+  <title>PURLINA MATRIX CORE — Dielektrik İmmersiyon Soğutma Platformu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style is:global>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #060912;
+      --navy-mid:   #0b1023;
+      --blue:       #1a50e0;
+      --blue-light: #3b82f6;
+      --red:        #c8102e;
+      --white:      #f0f4ff;
+      --muted:      rgba(220, 230, 255, 0.55);
+      --border:     rgba(255,255,255,0.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ─── Header ─── */
+    .hdr {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 5vw;
+      background: linear-gradient(to bottom, rgba(6,9,18,.96) 0%, transparent 100%);
+      backdrop-filter: blur(6px);
+    }
+    .hdr__word {
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .hdr__nav { display: flex; gap: 2rem; }
+    .hdr__nav a {
+      font-size: .8rem;
+      letter-spacing: .05em;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .hdr__nav a:hover { color: var(--white); }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero__bg img {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: auto;
+      max-width: 62%;
+      object-fit: cover;
+      object-position: left top;
+    }
+    .hero__bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        #060912 0%,
+        #060912 30%,
+        rgba(6,9,18,.88) 48%,
+        rgba(6,9,18,.3) 68%,
+        transparent 82%
+      );
+    }
+    .hero__content {
+      position: relative;
+      z-index: 1;
+      padding: 9rem 5vw 7rem;
+      max-width: 60rem;
+    }
+
+    /* ALKİM logo */
+    .alkim {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      margin-bottom: 3.5rem;
+    }
+    .alkim__icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+    .alkim__name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      line-height: 1;
+    }
+    .alkim__sub {
+      font-size: .52rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: .25rem;
+    }
+
+    /* Title */
+    .hero__title {
+      font-size: clamp(3.2rem, 9vw, 7.5rem);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.025em;
+      margin-bottom: 1.75rem;
+    }
+    .hero__title .pre {
+      display: block;
+      font-size: .42em;
+      letter-spacing: .2em;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: .2em;
+    }
+
+    .hero__desc {
+      font-size: clamp(.85rem, 1.5vw, 1rem);
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 30rem;
+      margin-bottom: 3rem;
+    }
+    .hero__desc em {
+      font-style: italic;
+      color: rgba(220,230,255,.35);
+    }
+
+    .hero__tagline {
+      border-left: 3px solid var(--blue-light);
+      padding: 1rem 1.5rem;
+      background: rgba(59,130,246,.07);
+      margin-bottom: 3rem;
+      display: inline-block;
+    }
+    .hero__tagline p {
+      font-size: clamp(1.3rem, 2.8vw, 2rem);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .hero__tagline .en {
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--muted);
+      margin-top: .5rem;
+      font-style: italic;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 600;
+      font-size: .88rem;
+      letter-spacing: .04em;
+      padding: .9rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+    .btn:hover { background: #1640c0; transform: translateY(-1px); }
+
+    /* ─── Generic section ─── */
+    .sec {
+      padding: 7rem 5vw;
+    }
+    .sec--alt { background: var(--navy-mid); }
+
+    .label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 1rem;
+    }
+    .heading {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1.05;
+      margin-bottom: .4rem;
+    }
+    .heading-en {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--blue-light);
+      margin-bottom: 2.5rem;
+    }
+
+    /* ─── Technology ─── */
+    .tech {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .tech__img {
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(59,130,246,.2), 0 24px 60px rgba(0,0,0,.5);
+    }
+    .tech__img img { width: 100%; display: block; }
+    .tech__body {
+      font-size: .95rem;
+      line-height: 1.85;
+      color: var(--muted);
+    }
+    .tech__body p + p { margin-top: 1.2rem; }
+    .tech__callout {
+      border-left: 3px solid var(--blue-light);
+      padding: 1rem 1.5rem;
+      background: rgba(59,130,246,.06);
+      border-radius: 0 4px 4px 0;
+      margin-top: 2rem;
+      font-size: .93rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.65;
+    }
+
+    /* ─── X Series ─── */
+    .x-intro {
+      text-align: center;
+      max-width: 44rem;
+      margin: 0 auto 4rem;
+    }
+    .x-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .x-card {
+      background: var(--navy-mid);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.5rem 2rem;
+      position: relative;
+      transition: border-color .3s;
+    }
+    .x-card:hover { border-color: rgba(59,130,246,.35); }
+    .x-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 8px 8px 0 0;
+      background: var(--blue-light);
+    }
+    .x-card__name {
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .x-card__tag {
+      font-size: .68rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+    .x-card__body {
+      font-size: .86rem;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .x-specs { list-style: none; }
+    .x-spec {
+      padding: .65rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: .15rem;
+    }
+    .x-spec__label {
+      font-size: .7rem;
+      letter-spacing: .04em;
+      color: var(--muted);
+    }
+    .x-spec__value {
+      font-weight: 600;
+      font-size: .9rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ─── Advantages / Stats ─── */
+    .stats-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .stats-wrap__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .stats-wrap__bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .22;
+    }
+    .stats-wrap__bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, #060912 0%, rgba(6,9,18,.7) 55%, rgba(6,9,18,.85) 100%),
+        linear-gradient(to bottom, rgba(6,9,18,.4) 0%, transparent 30%, transparent 70%, #060912 100%);
+    }
+    .stats-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .stat { text-align: center; }
+    .stat__num {
+      font-size: clamp(3.5rem, 7vw, 5.5rem);
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1;
+      color: var(--blue-light);
+      text-shadow: 0 0 40px rgba(59,130,246,.4);
+    }
+    .stat__lbl {
+      font-size: .75rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .75rem;
+    }
+    .adv-body {
+      max-width: 40rem;
+      margin-top: 3rem;
+      font-size: .93rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ─── Applications ─── */
+    .app-list { list-style: none; margin-top: 2rem; }
+    .app-item {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(.95rem, 2vw, 1.2rem);
+      color: var(--muted);
+      transition: color .2s, padding-left .2s;
+    }
+    .app-item:hover { color: var(--white); padding-left: .5rem; }
+    .app-num {
+      font-size: .68rem;
+      letter-spacing: .1em;
+      color: var(--blue-light);
+      min-width: 1.8rem;
+    }
+
+    /* ─── About ─── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .about__img img {
+      width: 100%;
+      display: block;
+      filter: drop-shadow(0 30px 60px rgba(0,0,0,.6));
+    }
+    .about__body {
+      font-size: .93rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+    .ops-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+    .op {
+      border-left: 2px solid var(--blue-light);
+      padding-left: 1.2rem;
+    }
+    .op__val {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .op__lbl {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .3rem;
+      line-height: 1.4;
+    }
+
+    /* ─── Outro ─── */
+    .outro {
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+    }
+    .outro::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60%;
+      background: radial-gradient(ellipse at 50% 120%, rgba(26,80,224,.22) 0%, transparent 65%);
+    }
+    .outro__inner { position: relative; z-index: 1; }
+    .outro__title {
+      font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+      font-weight: 700;
+      letter-spacing: -.025em;
+      line-height: 1.05;
+      margin-bottom: .75rem;
+    }
+    .outro__sub {
+      font-size: clamp(.95rem, 2vw, 1.3rem);
+      font-style: italic;
+      color: var(--blue-light);
+      margin-bottom: 3rem;
+    }
+    .outro__hr {
+      width: 50px;
+      height: 1px;
+      background: var(--border);
+      margin: 2.5rem auto;
+    }
+    .outro__contact {
+      display: flex;
+      flex-direction: column;
+      gap: .45rem;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .outro__contact a { color: var(--blue-light); text-decoration: none; }
+    .outro__contact a:hover { text-decoration: underline; }
+
+    /* ─── Footer ─── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 1.75rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    /* ─── Scroll animations ─── */
+    .up {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .up.show { opacity: 1; transform: none; }
+    .up:nth-child(2) { transition-delay: .1s; }
+    .up:nth-child(3) { transition-delay: .2s; }
+    .up:nth-child(4) { transition-delay: .3s; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .tech        { grid-template-columns: 1fr; gap: 3rem; }
+      .about-grid  { grid-template-columns: 1fr; gap: 3rem; }
+      .x-grid      { grid-template-columns: 1fr; }
+      .stats-grid  { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hdr__nav    { display: none; }
+      .hero__bg img { max-width: 100%; opacity: .35; }
+      .stats-grid  { grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+      .ops-grid    { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="hdr">
+    <a href="#hero" class="hdr__word">PURLINA MATRIX CORE</a>
+    <nav class="hdr__nav">
+      <a href="#x-series">X Serisi</a>
+      <a href="#technology">Teknoloji</a>
+      <a href="#advantages">Avantajlar</a>
+      <a href="#about">Alkim</a>
+      <a href="#contact">İletişim</a>
+    </nav>
+  </header>
+
+  <!-- ── Hero ── -->
+  <section id="hero" class="hero">
+    <div class="hero__bg">
+      <img src="/images/pdf-assets/cover_img0.png" alt="" fetchpriority="high" />
+    </div>
+    <div class="hero__content">
+
+      <!-- ALKİM logo -->
+      <div class="alkim">
+        <svg class="alkim__icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,4 44,40 4,40" fill="none" stroke="#c8102e" stroke-width="3.5" stroke-linejoin="round"/>
+          <line x1="11" y1="32" x2="37" y2="32" stroke="#c8102e" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <div class="alkim__name">ALKİM</div>
+          <div class="alkim__sub">PETROKİMYA SAN. VE TİC. A.Ş.</div>
+        </div>
+      </div>
+
+      <h1 class="hero__title">
+        <span class="pre">PURLINA</span>
+        MATRIX CORE
+      </h1>
+
+      <p class="hero__desc">
+        Yapay Zekâ Veri Merkezleri İçin Dielektrik İmmersiyon Soğutma Platformu<br/>
+        <em>Dielectric Immersion Cooling Platform for Artificial Intelligence Data Centers</em>
+      </p>
+
+      <div class="hero__tagline">
+        <p>Geleceği İşleyen<br/>Termal Devrim!</p>
+        <p class="en">The Thermal Revolution Shaping the Future!</p>
+      </div>
+
+      <a href="#contact" class="btn">
+        Teknik Veri Sayfası Talebi
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8H13M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── Technology ── -->
+  <section id="technology" class="sec sec--alt">
+    <div class="tech">
+      <div class="tech__img up">
+        <img src="/images/pdf-assets/thermal_img0.png" alt="Veri merkezi immersion soğutma" loading="lazy" />
+      </div>
+      <div class="up" style="transition-delay:.12s">
+        <p class="label">Teknoloji</p>
+        <h2 class="heading">Yeni Nesil Isı Yönetimi</h2>
+        <p class="heading-en">Next-Generation Thermal Management</p>
+        <div class="tech__body">
+          <p>Dijital dönüşümün ilk evresinde veri konuşuldu, ikinci evresinde hız ve işlem gücü. Bugün üçüncü evreye geçmiş durumdayız: ısı yönetimi.</p>
+          <p>Megavat seviyesinde enerji tüketen yapay zekâ kümeleri, büyük dil modeli eğitim altyapıları ve yüksek yoğunluklu GPU sistemleri artık yalnızca işlem kapasitesiyle değil, ürettikleri ısının nasıl yönetildiğiyle tanımlanmaktadır.</p>
+          <p>Klasik hava ve su bazlı soğutma sistemleri yüksek enerji tüketimi, evaporatif su kaybı ve karmaşık mekanik altyapı nedeniyle sürdürülebilirlik sınırına ulaşmıştır. Bu nedenle immersion cooling teknolojisi, veri merkezi mimarisinin doğal evrimi olarak kabul edilmektedir.</p>
+        </div>
+        <div class="tech__callout">
+          PURLINA MATRIX CORE bu yeni mimarinin merkezi olan dielektrik termal platformdur.<br/>
+          <span style="font-weight:400;color:var(--muted);font-style:italic">This is not a cooling fluid; it is the stable environment in which processors operate.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── X Series ── -->
+  <section id="x-series" class="sec">
+    <div class="x-intro up">
+      <p class="label">Ürün Serisi</p>
+      <h2 class="heading">PURLINA MATRIX CORE X Serisi</h2>
+      <p class="heading-en">Three separate viscosity segments have been developed for different thermal load profiles.</p>
+    </div>
+    <div class="x-grid">
+
+      <div class="x-card up">
+        <div class="x-card__name">X1</div>
+        <div class="x-card__tag">Düşük Viskozite · Laminar Akış</div>
+        <p class="x-card__body">CPU ve GPU sistemleri için optimize edilmiş, laminar akış profiliyle maksimum ısı transferi sağlar. Yüksek akışkanlık ve mükemmel ısı iletkenliği ile tasarlanmıştır.</p>
+        <ul class="x-specs">
+          <li class="x-spec">
+            <span class="x-spec__label">Kinematik Viskozite (40°C)</span>
+            <span class="x-spec__value">&lt;4 mm²/s</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Elektrik Dayanımı</span>
+            <span class="x-spec__value">&gt;25 kV</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Kaynama Noktası</span>
+            <span class="x-spec__value">242°C</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Yoğunluk</span>
+            <span class="x-spec__value">0.817 g/cm³</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="x-card up">
+        <div class="x-card__name">X2</div>
+        <div class="x-card__tag">Orta Viskozite · Dengeli Profil</div>
+        <p class="x-card__body">Karma yük profilleri ve hiperölçekli veri merkezi altyapıları için dengeli termal performans. Provides balanced performance for mixed data center loads.</p>
+        <ul class="x-specs">
+          <li class="x-spec">
+            <span class="x-spec__label">Kinematik Viskozite (40°C)</span>
+            <span class="x-spec__value">12 mm²/s</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Elektrik Dayanımı</span>
+            <span class="x-spec__value">&gt;25 kV</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Kaynama Noktası</span>
+            <span class="x-spec__value">298°C</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Yoğunluk</span>
+            <span class="x-spec__value">0.838 g/cm³</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="x-card up">
+        <div class="x-card__name">X3</div>
+        <div class="x-card__tag">Yüksek Viskozite · Kritik Yükler</div>
+        <p class="x-card__body">Maksimum termal stres koşulları. 24/7 çalışan kritik AI ve HPC altyapıları için. Elevated viscosity, enhanced sealing capability, high thermal stability.</p>
+        <ul class="x-specs">
+          <li class="x-spec">
+            <span class="x-spec__label">Kinematik Viskozite (40°C)</span>
+            <span class="x-spec__value">16 mm²/s</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Elektrik Dayanımı</span>
+            <span class="x-spec__value">&gt;25 kV</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Kaynama Noktası</span>
+            <span class="x-spec__value">242–398°C</span>
+          </li>
+          <li class="x-spec">
+            <span class="x-spec__label">Yangın Güvenliği</span>
+            <span class="x-spec__value">Yanmaz — Sıfır ateş riski</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Advantages / Stats ── -->
+  <section id="advantages" class="sec stats-wrap">
+    <div class="stats-wrap__bg">
+      <img src="/images/pdf-assets/datacenter_img0.png" alt="" loading="lazy" />
+    </div>
+    <div class="stats-inner">
+      <p class="label up">Avantajlar</p>
+      <h2 class="heading up">Enerjinin Dönüşümü</h2>
+      <p class="heading-en up">Advantages of PURLINA MATRIX CORE</p>
+      <div class="stats-grid">
+        <div class="stat up">
+          <div class="stat__num" data-target="40">0<span>%</span></div>
+          <div class="stat__lbl">Enerji Azaltımı</div>
+        </div>
+        <div class="stat up">
+          <div class="stat__num" data-target="33">0<span>%</span></div>
+          <div class="stat__lbl">TCO Düşüşü</div>
+        </div>
+        <div class="stat up">
+          <div class="stat__num" data-target="20">0<span>%</span></div>
+          <div class="stat__lbl">CO₂ Azaltımı</div>
+        </div>
+        <div class="stat up">
+          <div class="stat__num" data-target="85">0<span>%</span></div>
+          <div class="stat__lbl">Su Tasarrufu</div>
+        </div>
+      </div>
+      <p class="adv-body up">
+        Azaltılmış enerji maliyetleri ve emisyonlar: Yüksek soğutma verimliliği, mükemmel akış davranışı ve üstün termodinamik özellikler, ağınızı çalıştırmak için daha az enerjiye ihtiyaç duymanız anlamına gelir. Yüksek uyumluluk: Neredeyse tüm bilgisayar bileşenleriyle kullanıma uygundur.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Applications ── -->
+  <section id="applications" class="sec sec--alt">
+    <div style="max-width:44rem">
+      <p class="label up">Kullanım Alanları</p>
+      <h2 class="heading up">Sektörel Uygulama</h2>
+      <ul class="app-list">
+        <li class="app-item up"><span class="app-num">01</span> Yapay Zeka Veri Merkezleri</li>
+        <li class="app-item up"><span class="app-num">02</span> HPC Altyapı Sistemleri</li>
+        <li class="app-item up"><span class="app-num">03</span> Edge Veri Merkezleri</li>
+        <li class="app-item up"><span class="app-num">04</span> Madenci Veri Merkezleri</li>
+        <li class="app-item up"><span class="app-num">05</span> Blockchain &amp; Kripto Sistemleri</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── About Alkim ── -->
+  <section id="about" class="sec">
+    <div class="about-grid">
+      <div class="about__img up">
+        <img src="/images/pdf-assets/containers_img4.png" alt="ALKİM PURLINA MATRIX CORE" loading="lazy" />
+      </div>
+      <div class="up" style="transition-delay:.12s">
+        <p class="label">Kurumsal</p>
+        <h2 class="heading">Alkim Petrokimya</h2>
+        <p class="heading-en">The Invisible Strength Behind Tomorrow's Flawless Formulations.</p>
+        <p class="about__body">Alkim Petrokimya, kimya endüstrisinin önde gelen sektörlerinden biridir. Yılların deneyimi ve modern üretim altyapısıyla müşterilerine en iyi stratejik çözümleri ve en kaliteli ürünleri sunar.</p>
+        <p class="label" style="margin-bottom:1.5rem">Operasyonel Güç</p>
+        <div class="ops-grid">
+          <div class="op">
+            <div class="op__val">52.000 Ton</div>
+            <div class="op__lbl">Aktif Stok Kapasitesi</div>
+          </div>
+          <div class="op">
+            <div class="op__val">270.000 Ton/Yıl</div>
+            <div class="op__lbl">İşleme Gücü</div>
+          </div>
+          <div class="op">
+            <div class="op__val">60+ Tanker</div>
+            <div class="op__lbl">Filosu</div>
+          </div>
+          <div class="op">
+            <div class="op__val">6 Depo</div>
+            <div class="op__lbl">Merkezi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Outro / Contact ── -->
+  <section id="contact" class="sec outro">
+    <div class="outro__inner">
+      <p class="label">İletişim</p>
+      <h2 class="outro__title">Soğutmanın Değil,<br/>Evrimin Kararlı Ortamı</h2>
+      <p class="outro__sub">Not Just Cooling, But a Stable Environment for Evolution</p>
+      <a href="mailto:info@alkimpetrokimya.com.tr" class="btn">
+        Teknik Veri Sayfası Talebi
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8H13M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="outro__hr"></div>
+      <div class="outro__contact">
+        <span>ALKİM Petrokimya San. ve Tic. A.Ş.</span>
+        <span>Kimya Sanayicileri OSB Melek Aras Bulvarı, Aromatik Cd. No:61, 34956 Aydın-KOSB/İstanbul</span>
+        <span>+90 (216) 593 24 61 &nbsp;·&nbsp; +90 (544) 395 91 86</span>
+        <a href="mailto:info@alkimpetrokimya.com.tr">info@alkimpetrokimya.com.tr</a>
+        <a href="https://alkimpetrokimya.com" target="_blank" rel="noopener">alkimpetrokimya.com</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <span>© 2025 Alkim Petrokimya A.Ş. — PURLINA MATRIX CORE</span>
+    <span>info@alkimpetrokimya.com.tr</span>
+  </footer>
+
+  <script>
+    // Scroll-reveal
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.up').forEach(el => io.observe(el));
+
+    // Stat counters
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const target = +el.dataset.target;
+      const suffix = el.querySelector('span')?.textContent ?? '';
+      let done = false;
+      const obs = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting || done) return;
+        done = true; obs.disconnect();
+        const t0 = performance.now();
+        const dur = 1800;
+        const tick = now => {
+          const t = Math.min((now - t0) / dur, 1);
+          const e = 1 - Math.pow(1 - t, 3);
+          el.textContent = Math.round(e * target) + suffix;
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, { threshold: 0.5 });
+      obs.observe(el);
+    });
+  </script>
+
+</body>
 </html>
