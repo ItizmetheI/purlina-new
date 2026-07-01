@@ -25,3 +25,9 @@ pnpm-debug.log*
 
 # local-only Claude Code permissions, not meant to be shared
 .claude/settings.local.json
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
