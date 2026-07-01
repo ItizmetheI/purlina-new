@@ -30,12 +30,16 @@ vec3 vatDisplacement(vec3 p) {
   // Pseudo-curl noise: three independently-offset noise samples used as a
   // vector field. Not a true divergence-free curl, but the standard cheap
   // approximation for "swirly, never-settling" motion in shader work.
+  // Lower frequency + amplitude than the original pass — high-frequency
+  // noise at 0.35 amplitude read as a chaotic crumpled mess mid-transition
+  // rather than a liquid deformation; large, slow waves at lower amplitude
+  // keep the in-between state reading as "still the same material, moving."
   float twirlEnvelope = sin(uProgress * 3.14159265) * uTwirlStrength;
   vec3 twirl = vec3(
-    snoise(p * 1.8 + vec3(0.0, 0.0, uTime * 0.6)),
-    snoise(p * 1.8 + vec3(37.0, 17.0, uTime * 0.6)),
-    snoise(p * 1.8 + vec3(71.0, 53.0, uTime * 0.6))
-  ) * twirlEnvelope * 0.35;
+    snoise(p * 0.9 + vec3(0.0, 0.0, uTime * 0.5)),
+    snoise(p * 0.9 + vec3(37.0, 17.0, uTime * 0.5)),
+    snoise(p * 0.9 + vec3(71.0, 53.0, uTime * 0.5))
+  ) * twirlEnvelope * 0.18;
 
   vec3 idle = vec3(
     snoise(p * 2.4 + vec3(0.0, 0.0, uTime * 0.25)),
@@ -85,6 +89,10 @@ export function createLiquidBlobMaterial() {
     roughness: 0.08,
     clearcoat: 0.3,
     clearcoatRoughness: 0.2,
+    // "night" is a dark env by design (see Experience.jsx) — boosted past the
+    // default 1 so the chrome still reads as bright mirror rather than sinking
+    // into the void on the shape's darker-reflecting facets.
+    envMapIntensity: 2.2,
   });
 
   // Created up front (not inside onBeforeCompile, which only runs once the
@@ -101,6 +109,7 @@ export function createLiquidBlobMaterial() {
     uTwirlStrength: { value: 0 },
     uIdleAmount: { value: 0.012 },
     uTime: { value: 0 },
+    uAccentColor: { value: new THREE.Color(1, 1, 1) },
   };
   material.userData.uniforms = uniforms;
 
@@ -111,6 +120,30 @@ export function createLiquidBlobMaterial() {
       .replace('#include <common>', `#include <common>\n${VERTEX_DECLARATIONS}`)
       .replace('#include <beginnormal_vertex>', NORMAL_BLOCK)
       .replace('#include <begin_vertex>', POSITION_BLOCK);
+
+    // Fragment shader: declare new uniforms then inject iridescent rim color
+    // after standard PBR output. vViewPosition and normal are already present
+    // in MeshPhysicalMaterial's compiled fragment shader.
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <common>',
+        '#include <common>\nuniform float uTime;\nuniform vec3 uAccentColor;',
+      )
+      .replace(
+        '#include <output_fragment>',
+        `#include <output_fragment>
+vec3 _viewDir = normalize(-vViewPosition);
+float _rim = 1.0 - max(0.0, dot(_viewDir, normal));
+_rim = pow(_rim, 1.8);
+float _cycle = _rim * 6.0 + uTime * 0.12;
+vec3 _irid = vec3(
+  sin(_cycle) * 0.5 + 0.5,
+  sin(_cycle + 2.094) * 0.5 + 0.5,
+  sin(_cycle + 4.189) * 0.5 + 0.5
+);
+_irid = mix(_irid, uAccentColor, 0.4);
+gl_FragColor.rgb += _irid * _rim * 0.5;`,
+      );
   };
   material.customProgramCacheKey = () => 'liquid-blob-vat';
 

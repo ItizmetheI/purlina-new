@@ -8,12 +8,21 @@ import Experience from '../experience/Experience.jsx';
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
+			rel="stylesheet"
+		/>
 		<title>Purlina Matrix</title>
 		<style>
 			html,
 			body {
 				margin: 0;
-				background: #0a0a0a;
+				/* Deep indigo-navy — visible dark blue, not near-black.
+				   Chrome blob needs atmosphere to float in, not a void.
+				   Screen-blend sector glows read properly against a colored base. */
+				background: radial-gradient(ellipse at 50% 30%, #141c3d 0%, #0b0d20 55%, #060810 100%);
 				color: #f5f5f5;
 				font-family: system-ui, sans-serif;
 			}

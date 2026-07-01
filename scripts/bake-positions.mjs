@@ -205,6 +205,83 @@ function conformToSurface(masterPositions, bvh, halfExtents) {
   return conformed;
 }
 
+/** Vertex -> neighbor-index list, built once per tier from the shared index buffer. */
+function buildAdjacency(indexArray, vertexCount) {
+  const sets = Array.from({ length: vertexCount }, () => new Set());
+  for (let t = 0; t < indexArray.length; t += 3) {
+    const a = indexArray[t];
+    const b = indexArray[t + 1];
+    const c = indexArray[t + 2];
+    sets[a].add(b).add(c);
+    sets[b].add(a).add(c);
+    sets[c].add(a).add(b);
+  }
+  return sets.map((set) => Array.from(set));
+}
+
+/**
+ * conformToSurface projects every master vertex independently, so a handful of
+ * vertices per sector land on the wrong lobe of the surface (or a disconnected
+ * part of it) relative to their neighbors — fine on their own, but the triangles
+ * touching them get stretched into long spikes, reading as a "crumpled"/spiky
+ * patch in an otherwise clean silhouette (confirmed via edge-length analysis:
+ * the unconformed master sphere's longest edge is ~1.1x its mean, conformed
+ * sectors have edges up to ~48x their mean). Detect those outliers by comparing
+ * each vertex's mean distance to its neighbors against the global median, and
+ * relax them to their neighbors' average position — leaves correctly-conformed
+ * vertices (the vast majority) untouched.
+ */
+function relaxOutliers(positions, adjacency, { factor = 2.5, maxIterations = 8 } = {}) {
+  const vertexCount = adjacency.length;
+  let current = positions.slice();
+
+  for (let iter = 0; iter < maxIterations; iter++) {
+    const edgeMean = new Float32Array(vertexCount);
+    for (let i = 0; i < vertexCount; i++) {
+      const neighbors = adjacency[i];
+      if (neighbors.length === 0) continue;
+      const x = current[i * 3];
+      const y = current[i * 3 + 1];
+      const z = current[i * 3 + 2];
+      let sum = 0;
+      for (const n of neighbors) {
+        sum += Math.sqrt(
+          (x - current[n * 3]) ** 2 + (y - current[n * 3 + 1]) ** 2 + (z - current[n * 3 + 2]) ** 2,
+        );
+      }
+      edgeMean[i] = sum / neighbors.length;
+    }
+
+    const sorted = Float32Array.from(edgeMean).sort();
+    const median = sorted[Math.floor(sorted.length / 2)];
+    const threshold = median * factor;
+
+    const next = current.slice();
+    let outlierCount = 0;
+    for (let i = 0; i < vertexCount; i++) {
+      if (edgeMean[i] <= threshold) continue;
+      const neighbors = adjacency[i];
+      if (neighbors.length === 0) continue;
+      let sx = 0;
+      let sy = 0;
+      let sz = 0;
+      for (const n of neighbors) {
+        sx += current[n * 3];
+        sy += current[n * 3 + 1];
+        sz += current[n * 3 + 2];
+      }
+      next[i * 3] = sx / neighbors.length;
+      next[i * 3 + 1] = sy / neighbors.length;
+      next[i * 3 + 2] = sz / neighbors.length;
+      outlierCount++;
+    }
+    current = next;
+    if (outlierCount === 0) break;
+  }
+
+  return current;
+}
+
 /** Recenter on centroid and rescale so the bounding sphere has radius `targetRadius`. */
 function normalizePoints(points, targetRadius = 1) {
   const count = points.length / 3;
@@ -243,16 +320,71 @@ function computeSmoothNormals(indexArray, positions) {
   return geometry.attributes.normal.array;
 }
 
+/**
+ * Even after position-outlier relaxation, conformed geometry can have
+ * genuinely sharp local dihedral angles (cosmetics' neck/shoulder band,
+ * manufacturing's camera body — CLAUDE.md's open dark-crease item) that
+ * computeVertexNormals() faithfully reports as creases: correct face math,
+ * but visually harsh under the "night" environment's sharp, sparse
+ * highlights. Blends each vertex's normal partway toward its topological
+ * neighbors' average for a few passes — same adjacency-relaxation idea as
+ * relaxOutliers(), applied to normals instead of positions — softening
+ * creases without flattening the overall form (blend < 1, not a full
+ * replace, and few iterations, so curvature the shape actually has stays).
+ */
+function smoothNormals(normals, adjacency, { iterations = 3, blend = 0.5 } = {}) {
+  let current = normals.slice();
+  const v = new THREE.Vector3();
+
+  for (let iter = 0; iter < iterations; iter++) {
+    const next = new Float32Array(current.length);
+    for (let i = 0; i < adjacency.length; i++) {
+      const neighbors = adjacency[i];
+      let sx = current[i * 3];
+      let sy = current[i * 3 + 1];
+      let sz = current[i * 3 + 2];
+      if (neighbors.length > 0) {
+        let ax = 0;
+        let ay = 0;
+        let az = 0;
+        for (const n of neighbors) {
+          ax += current[n * 3];
+          ay += current[n * 3 + 1];
+          az += current[n * 3 + 2];
+        }
+        ax /= neighbors.length;
+        ay /= neighbors.length;
+        az /= neighbors.length;
+        sx = sx * (1 - blend) + ax * blend;
+        sy = sy * (1 - blend) + ay * blend;
+        sz = sz * (1 - blend) + az * blend;
+      }
+      v.set(sx, sy, sz).normalize();
+      next[i * 3] = v.x;
+      next[i * 3 + 1] = v.y;
+      next[i * 3 + 2] = v.z;
+    }
+    current = next;
+  }
+
+  return current;
+}
+
 async function bakeTier(tierName) {
   const masterGeometry = createMasterBlobGeometry(tierName);
   const masterPositions = masterGeometry.attributes.position.array;
   const indexArray = masterGeometry.index.array;
   const vertexCount = masterGeometry.attributes.position.count;
+  const adjacency = buildAdjacency(indexArray, vertexCount);
 
   const states = [];
 
   const blobPositions = normalizePoints(masterPositions.slice());
-  states.push({ name: 'blob', positions: blobPositions, normals: computeSmoothNormals(indexArray, blobPositions) });
+  states.push({
+    name: 'blob',
+    positions: blobPositions,
+    normals: smoothNormals(computeSmoothNormals(indexArray, blobPositions), adjacency),
+  });
 
   for (const sector of SECTORS) {
     const glbPath = join(ROOT, 'assets', 'products', sector.file);
@@ -265,8 +397,9 @@ async function bakeTier(tierName) {
     const triangles = normalizeTriangles(rawTriangles, 1);
     const bvh = buildBVH(triangles);
     const halfExtents = computeHalfExtents(triangles);
-    const conformed = normalizePoints(conformToSurface(masterPositions, bvh, halfExtents));
-    const normals = computeSmoothNormals(indexArray, conformed);
+    const rawConformed = conformToSurface(masterPositions, bvh, halfExtents);
+    const conformed = normalizePoints(relaxOutliers(rawConformed, adjacency));
+    const normals = smoothNormals(computeSmoothNormals(indexArray, conformed), adjacency);
 
     states.push({ name: sector.name, positions: conformed, normals });
     console.log(`conformed ${sector.name} (tier=${tierName}, verts=${vertexCount})`);

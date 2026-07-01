@@ -2,8 +2,8 @@
   "scenes": [
     {
       "id": "intro",
-      "logo": "PURLINA MATRIX",
-      "heading": "Yeni Nesil ....."
+      "heading": "Yeni Nesil Akıllı Kaplama Teknolojisi",
+      "body": "Tek bir malzeme, 900'den fazla sektöre uyum sağlayan akıllı yapı."
     },
     {
       "id": "benefits",
@@ -18,37 +18,46 @@
     {
       "id": "automotive",
       "sector": "automotive",
+      "side": "right",
       "heading": "Otomotiv",
-      "body": "Placeholder: automotive sector copy."
+      "body": "Araç gövdesinden motor parçalarına kadar her yüzeyde üstün koruma. Kimyasal direnci ve ısı stabilitesiyle otomotiv endüstrisinin en zorlu koşullarına meydan okur."
     },
     {
       "id": "cosmetics",
       "sector": "cosmetics",
-      "heading": "Kozmetik",
-      "body": "Placeholder: cosmetics sector copy."
+      "side": "left",
+      "heading": "Kozmetik & Sağlık",
+      "body": "Medikal sınıf saflıkta, cilt dostu formülasyon. Ambalajdan ürün yüzeyine — hijyenik, hafif ve tamamen uyumlu."
     },
     {
       "id": "footwear",
       "sector": "footwear",
+      "side": "right",
       "heading": "Ayakkabı & Tekstil",
-      "body": "Placeholder: footwear/textile sector copy."
+      "body": "Esnek yapısıyla her dokuya, her forma uyar. Suya, aşınmaya ve UV ışınlarına karşı uzun ömürlü bariyer. Tasarımı bozmadan, performansı artırır."
     },
     {
       "id": "electronics",
       "sector": "electronics",
+      "side": "left",
       "heading": "Elektronik",
-      "body": "Placeholder: electronics sector copy."
+      "body": "Neme, ısıya ve elektrostatik yüke karşı mikron kalınlığında kalkan. Devreleri korurken sinyali bozmaz — hassas elektroniğin vazgeçilmezi."
     },
     {
       "id": "manufacturing",
       "sector": "manufacturing",
+      "side": "right",
       "heading": "Hassas Üretim",
-      "body": "Placeholder: precision manufacturing sector copy."
+      "body": "Toleransları koruyarak sürtünmeyi azaltır. Endüstriyel makinelerde yüzey bütünlüğünü artırır, bakım aralıklarını uzatır ve üretim verimliliğini yükseltir."
     },
     {
       "id": "outro",
       "heading": "900+ sektöre uyumlanabilen yapı...",
-      "cta": "Purlina Matrix Oluştur"
+      "cta": "Purlina Matrix Oluştur",
+      "footer": {
+        "copyright": "© 2026 Purlina Matrix. Tüm hakları saklıdır.",
+        "contact": "info@purlinamatrix.com"
+      }
     }
   ]
 }

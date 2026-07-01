@@ -1,5 +1,58 @@
 .experience {
   position: relative;
+  /* Without an explicit z-index, position:relative alone does NOT establish
+     a stacking context (z-index:auto) — every negative-z-index descendant
+     (the ambient glow, sector glows) was bubbling up to compete at the ROOT
+     stacking context instead of staying scoped behind this component's own
+     z-index:0 canvas, which is why they rendered invisible regardless of
+     opacity/color (confirmed by testing: a positive z-index made them appear
+     instantly). z-index:0 here scopes all descendants' stacking locally. */
+  z-index: 0;
+}
+
+.experience__ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  /* Electric blue-violet atmospheric glow — visible color in the darkness,
+     not the subtle amber that read as nothing. Chrome on deep blue looks
+     like a film still; chrome on black looks like a debug render. */
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(90, 70, 240, 0.75) 0%,
+    rgba(50, 35, 160, 0.45) 38%,
+    rgba(20, 15, 70, 0.2) 60%,
+    transparent 75%
+  );
+  animation: experience-ambient-breathe 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes experience-ambient-breathe {
+  0%,
+  100% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Opacity is driven per-frame from JS (TextScenes' applyFade), reusing the
+   same scroll-fade value already computed for the section's own opacity —
+   no separate animation/transition here, it would fight the scroll-linked
+   updates. `screen` blend mode adds the accent as light on top of the dark
+   base instead of a flat tinted rectangle. Gradient covers 70% of the
+   viewport (was 60%) so the color floods the scene rather than hugging center. */
+.experience__sector-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background: radial-gradient(ellipse at 50% 50%, var(--glow-color) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: opacity;
 }
 
 .experience__canvas {
@@ -26,33 +79,97 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2rem 6vw;
   opacity: 0;
   will-change: opacity;
 }
 
-.experience__logo {
-  position: absolute;
-  top: 2rem;
-  left: 2rem;
-  font-weight: 800;
+.experience__scene--left {
+  justify-content: flex-start;
+}
+
+.experience__scene--right {
+  justify-content: flex-end;
+}
+
+.experience__scene--left .experience__text,
+.experience__scene--right .experience__text {
+  text-align: left;
+}
+
+.experience__header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 6vw;
+  pointer-events: none;
+}
+
+.experience__wordmark {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  color: #f5f5f5;
+  pointer-events: auto;
+}
+
+.experience__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem 1.5rem;
+  pointer-events: auto;
+}
+
+.experience__nav a {
+  white-space: nowrap;
+  color: rgba(245, 245, 245, 0.7);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+}
+
+.experience__nav a:hover,
+.experience__nav a:focus-visible,
+.experience__nav a.experience__nav-link--active {
   color: #f5f5f5;
 }
 
 .experience__text {
-  max-width: 32rem;
+  max-width: 38rem;
   text-align: center;
   color: #f5f5f5;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
+  will-change: transform;
+}
+
+/* Centered sections (intro/benefits/outro): text-shadow is the legibility
+   tool, not a panel. The blob bleeds through compositionally. */
+.experience__scene:not(.experience__scene--left):not(.experience__scene--right) .experience__text {
+  text-shadow: 0 0 80px rgba(0, 0, 0, 1), 0 0 30px rgba(0, 0, 0, 0.95), 0 2px 6px rgba(0, 0, 0, 0.9);
 }
 
 .experience__text h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  margin-bottom: 0.75rem;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.8rem, 7vw, 6.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.0;
+  margin-bottom: 1rem;
 }
 
 .experience__text h3 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   margin-bottom: 0.75rem;
   opacity: 0.9;
@@ -66,6 +183,14 @@
   gap: 0.5rem;
   font-size: clamp(1rem, 1.5vw, 1.125rem);
   opacity: 0.85;
+}
+
+.experience__text p {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  opacity: 0.65;
+  max-width: 28rem;
+  margin: 0 auto;
 }
 
 .experience__cta {
@@ -99,30 +224,139 @@
   padding: 0.4rem;
 }
 
-.experience__icons {
+.experience__footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(245, 245, 245, 0.15);
+  font-size: 0.8rem;
+  color: rgba(245, 245, 245, 0.5);
+}
+
+.experience__footer p {
+  margin: 0.25rem 0;
+}
+
+.experience__scroll-cue {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgba(245, 245, 245, 0.6);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  animation: experience-scroll-cue-bounce 2s ease-in-out infinite;
+}
+
+.experience__scroll-cue--hidden {
+  opacity: 0;
+}
+
+@keyframes experience-scroll-cue-bounce {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, 8px);
+  }
+}
+
+.experience__loading {
   position: fixed;
   inset: 0;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #0a0a0c;
+  transition: opacity 0.5s ease;
+}
+
+.experience__loading .experience__wordmark {
+  animation: experience-loading-pulse 1.6s ease-in-out infinite;
+}
+
+.experience__loading--hidden {
+  opacity: 0;
   pointer-events: none;
-  will-change: opacity;
 }
 
-.experience__icon {
-  position: absolute;
-  color: #f5f5f5;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+@keyframes experience-loading-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
-.experience__icon--automotive {
-  transform: translate(-9rem, -3rem);
+/* Inline SVG feTurbulence noise, no image asset needed. Sits above
+   everything (z-index above the header/loading screen) since it's meant to
+   texture the whole rendered page, not just the canvas. Stepped position
+   shift per frame is the classic CSS film-grain flicker trick. */
+.experience__grain {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+  animation: experience-grain-shift 1.2s steps(6) infinite;
 }
 
-.experience__icon--medical {
-  transform: translate(7rem, -5rem);
+@keyframes experience-grain-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -3%);
+  }
+  30% {
+    transform: translate(3%, 2%);
+  }
+  50% {
+    transform: translate(-1%, 3%);
+  }
+  70% {
+    transform: translate(2%, -2%);
+  }
+  90% {
+    transform: translate(-3%, 1%);
+  }
 }
 
-.experience__icon--cosmetics {
-  transform: translate(1rem, 6rem);
+.experience__progress {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 }
+
+.experience__progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(245, 245, 245, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.experience__progress-dot--active {
+  background: #f5f5f5;
+  transform: scale(1.6);
+}
+
