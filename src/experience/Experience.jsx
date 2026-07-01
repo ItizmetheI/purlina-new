@@ -68,11 +68,9 @@ function computeFade(progress, isFirst, isLast) {
 // section sharing one flat dark palette. Picked for a cinematic, moody
 // saturation rather than candy-bright.
 const SECTOR_ACCENTS = {
-  automotive: '#3aa0ff',
-  cosmetics: '#f0879c',
-  footwear: '#e8893f',
-  electronics: '#9b6bff',
-  manufacturing: '#c2703f',
+  automotive: '#00d4ff',
+  cosmetics: '#3a7fff',
+  electronics: '#ff6b35',
 };
 
 // Nothing on the page hints that there's more below the fold on first paint —
@@ -91,7 +89,7 @@ function ScrollCue() {
 
   return (
     <div className={`experience__scroll-cue${visible ? '' : ' experience__scroll-cue--hidden'}`} aria-hidden="true">
-      <span>Kaydır</span>
+      <span>KAYDИР</span>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -131,6 +129,50 @@ function ProgressDots({ scenes, activeSection, lenisRef }) {
         />
       ))}
     </nav>
+  );
+}
+
+// Counts up from 0 to `target` when the element enters the viewport.
+// Fires once per page load — observer disconnects after the first trigger.
+function StatCounter({ target, suffix, label }) {
+  const ref = useRef();
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let rafId;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        const start = performance.now();
+        const duration = 1800;
+        const tick = (now) => {
+          const t = Math.min((now - start) / duration, 1);
+          const eased = 1 - (1 - t) ** 3;
+          setValue(Math.round(eased * target));
+          if (t < 1) rafId = requestAnimationFrame(tick);
+        };
+        rafId = requestAnimationFrame(tick);
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [target]);
+
+  return (
+    <div ref={ref} className="experience__stat">
+      <div className="experience__stat-number">
+        {value}
+        {suffix}
+      </div>
+      <div className="experience__stat-label">{label}</div>
+    </div>
   );
 }
 
@@ -195,6 +237,7 @@ function TextScenes({ scenes, blobStateRef, lenisRef, onActiveSectionChange }) {
             ...(sectorRow >= 0 ? computeSectionState(self.progress, sectorRow) : blobStateRef.current),
             xSign,
             accentHex: scene.sector ? SECTOR_ACCENTS[scene.sector] : '#ffffff',
+            idleIntensity: scene.idleIntensity ?? 0.012,
           };
         },
       });
@@ -278,6 +321,23 @@ function TextScenes({ scenes, blobStateRef, lenisRef, onActiveSectionChange }) {
                   ))}
                 </ul>
               </>
+            )}
+            {scene.stats && (
+              <div className="experience__stats">
+                {scene.stats.map((s) => (
+                  <StatCounter key={s.label} target={s.value} suffix={s.suffix} label={s.label} />
+                ))}
+              </div>
+            )}
+            {scene.appList && (
+              <ul className="experience__app-list">
+                {scene.appList.map((app, i) => (
+                  <li key={app} className="experience__app-item">
+                    <span className="experience__app-num">0{i + 1}</span>
+                    <span>{app}</span>
+                  </li>
+                ))}
+              </ul>
             )}
             {scene.body && <p>{scene.body}</p>}
             {scene.cta && (
@@ -365,7 +425,7 @@ export default function Experience() {
   const tier = useBlobTier();
   const [blobReady, setBlobReady] = useState(false);
   const [activeSection, setActiveSection] = useState(scrollScript.scenes[0]?.id);
-  const blobStateRef = useRef({ fromRow: BLOB_ROW, toRow: BLOB_ROW, progress: 0, twirlStrength: 0, xSign: 0, accentHex: '#ffffff' });
+  const blobStateRef = useRef({ fromRow: BLOB_ROW, toRow: BLOB_ROW, progress: 0, twirlStrength: 0, xSign: 0, accentHex: '#ffffff', idleIntensity: 0.012 });
   const lenisRef = useLenisScroll();
 
   // R3F measures its container via react-use-measure on mount; on this page
@@ -386,6 +446,7 @@ export default function Experience() {
           otherwise has zero color or motion anywhere on the page. Sits at a
           negative z-index so it shows through the canvas's transparent
           background instead of covering it. */}
+      <div className="experience__grid" aria-hidden="true" />
       <div className="experience__ambient" aria-hidden="true" />
       {/* One per sector, opacity-driven by that section's own scroll fade
           (see TextScenes' applyFade) — tints the glow with the active

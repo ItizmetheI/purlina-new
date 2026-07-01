@@ -180,9 +180,17 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  font-size: clamp(1rem, 1.5vw, 1.125rem);
-  opacity: 0.85;
+  gap: 0;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+  opacity: 0.75;
+  margin-top: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.experience__text ul li {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(245, 245, 245, 0.07);
+  letter-spacing: 0.01em;
 }
 
 .experience__text p {
@@ -334,6 +342,72 @@
   90% {
     transform: translate(-3%, 1%);
   }
+}
+
+/* Subtle PCB/server-rack grid — implies precision engineering.
+   Near-invisible so it doesn't compete with the blob. */
+.experience__grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+}
+
+/* Animated stat counters */
+.experience__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem 2.5rem;
+  margin-top: 2rem;
+}
+
+.experience__stat-number {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #00d4ff;
+  text-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+}
+
+.experience__stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-top: 0.4rem;
+}
+
+/* Numbered application list */
+.experience__app-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.experience__app-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(245, 245, 245, 0.08);
+}
+
+.experience__app-num {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  opacity: 0.35;
+  flex-shrink: 0;
+  min-width: 1.5rem;
 }
 
 .experience__progress {

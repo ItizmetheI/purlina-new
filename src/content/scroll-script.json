@@ -2,62 +2,107 @@
   "scenes": [
     {
       "id": "intro",
-      "heading": "Yeni Nesil Akıllı Kaplama Teknolojisi",
-      "body": "Tek bir malzeme, 900'den fazla sektöre uyum sağlayan akıllı yapı."
+      "heading": "Geleceği İşleyen Termal Devrim",
+      "body": "Yapay Zeka Veri Merkezleri İçin Dielektrik İmmersiyon Soğutma Platformu.",
+      "idleIntensity": 0.012
     },
     {
-      "id": "benefits",
-      "benefitsLabel": "Faydalar",
-      "benefits": [
-        "Yeni regülasyon değişikliğine adaptasyon",
-        "Kolaylık",
-        "Maliyet",
-        "Hız"
-      ]
+      "id": "problem",
+      "heading": "Isı; yapay zekanın görünmez duvarı",
+      "body": "Veri merkezleri küresel elektriğin %2'sini tüketiyor ve her yıl %20 büyüyor. AI ve HPC sistemleri, geleneksel hava soğutmasının fiziksel sınırlarını zorluyor.",
+      "idleIntensity": 0.025
     },
     {
-      "id": "automotive",
+      "id": "x1",
       "sector": "automotive",
       "side": "right",
-      "heading": "Otomotiv",
-      "body": "Araç gövdesinden motor parçalarına kadar her yüzeyde üstün koruma. Kimyasal direnci ve ısı stabilitesiyle otomotiv endüstrisinin en zorlu koşullarına meydan okur."
+      "heading": "X1",
+      "benefitsLabel": "Teknik Özellikler",
+      "benefits": [
+        "Kinematik Viskozite: <4 mm²/s (40°C)",
+        "Elektrik Dayanımı: >25 kV",
+        "Kaynama Noktası: 242°C",
+        "Yoğunluk: 0.817 g/cm³"
+      ],
+      "body": "CPU ve GPU sistemleri için optimize edilmiş, laminar akış profiliyle maksimum ısı transferi.",
+      "idleIntensity": 0.006
     },
     {
-      "id": "cosmetics",
+      "id": "x2",
       "sector": "cosmetics",
       "side": "left",
-      "heading": "Kozmetik & Sağlık",
-      "body": "Medikal sınıf saflıkta, cilt dostu formülasyon. Ambalajdan ürün yüzeyine — hijyenik, hafif ve tamamen uyumlu."
+      "heading": "X2",
+      "benefitsLabel": "Teknik Özellikler",
+      "benefits": [
+        "Kinematik Viskozite: 12 mm²/s (40°C)",
+        "Elektrik Dayanımı: >25 kV",
+        "Kaynama Noktası: 298°C",
+        "Yoğunluk: 0.838 g/cm³"
+      ],
+      "body": "Karma yük profilleri ve hiperölçekli veri merkezi altyapıları için dengeli termal performans.",
+      "idleIntensity": 0.022
     },
     {
-      "id": "footwear",
-      "sector": "footwear",
-      "side": "right",
-      "heading": "Ayakkabı & Tekstil",
-      "body": "Esnek yapısıyla her dokuya, her forma uyar. Suya, aşınmaya ve UV ışınlarına karşı uzun ömürlü bariyer. Tasarımı bozmadan, performansı artırır."
-    },
-    {
-      "id": "electronics",
+      "id": "x3",
       "sector": "electronics",
-      "side": "left",
-      "heading": "Elektronik",
-      "body": "Neme, ısıya ve elektrostatik yüke karşı mikron kalınlığında kalkan. Devreleri korurken sinyali bozmaz — hassas elektroniğin vazgeçilmezi."
+      "side": "right",
+      "heading": "X3",
+      "benefitsLabel": "Teknik Özellikler",
+      "benefits": [
+        "Kinematik Viskozite: 16 mm²/s (40°C)",
+        "Elektrik Dayanımı: >25 kV",
+        "Kaynama Noktası: 242–398°C",
+        "Yanmaz yapı: Sıfır ateş riski"
+      ],
+      "body": "Maksimum termal stres koşulları. 24/7 çalışan kritik AI ve HPC altyapıları için.",
+      "idleIntensity": 0.048
     },
     {
-      "id": "manufacturing",
-      "sector": "manufacturing",
-      "side": "right",
-      "heading": "Hassas Üretim",
-      "body": "Toleransları koruyarak sürtünmeyi azaltır. Endüstriyel makinelerde yüzey bütünlüğünü artırır, bakım aralıklarını uzatır ve üretim verimliliğini yükseltir."
+      "id": "energy",
+      "heading": "Enerjinin Dönüşümü",
+      "stats": [
+        { "value": 40, "suffix": "%", "label": "Enerji azaltımı" },
+        { "value": 33, "suffix": "%", "label": "TCO düşüşü" },
+        { "value": 20, "suffix": "%", "label": "CO₂ azaltımı" },
+        { "value": 85, "suffix": "%", "label": "Su tasarrufu" }
+      ],
+      "idleIntensity": 0.018
+    },
+    {
+      "id": "applications",
+      "heading": "Kullanım Alanları",
+      "appList": [
+        "Yapay Zeka Veri Merkezleri",
+        "HPC Altyapı Sistemleri",
+        "Edge Veri Merkezleri",
+        "Madenci Veri Merkezleri",
+        "Blockchain & Kripto Sistemleri"
+      ],
+      "idleIntensity": 0.02
+    },
+    {
+      "id": "about",
+      "heading": "Alkim Petrokimya",
+      "benefitsLabel": "Operasyonel Güç",
+      "benefits": [
+        "52.000 Ton Aktif Stok Kapasitesi",
+        "270.000 Ton / Yıl İşleme Gücü",
+        "60+ Tanker Filosu",
+        "6 Depo Merkezi"
+      ],
+      "body": "The Invisible Strength Behind Tomorrow's Flawless Formulations.",
+      "idleIntensity": 0.014
     },
     {
       "id": "outro",
-      "heading": "900+ sektöre uyumlanabilen yapı...",
-      "cta": "Purlina Matrix Oluştur",
+      "heading": "Soğutmanın Değil, Evrimin Kararlı Ortamı",
+      "body": "Not Just Cooling, But a Stable Environment for Evolution.",
+      "cta": "Teknik veri sayfası talebi",
       "footer": {
-        "copyright": "© 2026 Purlina Matrix. Tüm hakları saklıdır.",
-        "contact": "info@purlinamatrix.com"
-      }
+        "copyright": "© 2025 Alkim Petrokimya A.Ş. — PURLINA MATRIX CORE",
+        "contact": "info@alkimpetrokimya.com.tr"
+      },
+      "idleIntensity": 0.012
     }
   ]
 }

@@ -115,6 +115,16 @@ export default function LiquidBlob({ tier, stateRef, onReady }) {
     uniforms.uProgress.value = sm.progress;
     uniforms.uTwirlStrength.value = sm.twirlStrength;
 
+    // Idle intensity varies per section — X1 is near-laminar (calm fluid),
+    // X3 is convective turbulence (high thermal load). Damped so the surface
+    // character transitions fluidly rather than snapping between scenes.
+    uniforms.uIdleAmount.value = THREE.MathUtils.damp(
+      uniforms.uIdleAmount.value,
+      s.idleIntensity ?? 0.012,
+      2,
+      delta,
+    );
+
     // Damp accent color per-channel toward the active sector's hue
     accentTargetRef.current.set(s.accentHex || '#ffffff');
     const ac = accentRef.current;

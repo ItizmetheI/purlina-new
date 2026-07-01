@@ -13,7 +13,7 @@ export default function Header({ lenisRef, activeSection }) {
 
   return (
     <header className="experience__header">
-      <span className="experience__wordmark">PURLINA MATRIX</span>
+      <span className="experience__wordmark">PURLINA MATRIX CORE</span>
       <nav className="experience__nav" aria-label="Sektörler">
         {SECTOR_SCENES.map((scene) => (
           <a
